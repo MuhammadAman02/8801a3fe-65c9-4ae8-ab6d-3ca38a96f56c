@@ -1,13 +1,17 @@
-import app from "./app"; // ✅ This is a Fastify instance
+import { createApp } from './app';
+import { env } from './config/env';
 
-const start = async () => {
+async function start() {
+  const app = createApp();
+
   try {
-    await app.listen({ port: 3000, host: "0.0.0.0" });
-    console.log("🚀 Server listening at http://localhost:3000");
+    await app.listen({ port: env.PORT, host: '0.0.0.0' });
+    console.log(`🚀 Server running on http://localhost:${env.PORT}`);
+    console.log(`📋 Fruits API available at http://localhost:${env.PORT}/api/fruits`);
   } catch (err) {
-    app.log.error(err);
+    console.error('Error starting server:', err);
     process.exit(1);
   }
-};
+}
 
 start();
