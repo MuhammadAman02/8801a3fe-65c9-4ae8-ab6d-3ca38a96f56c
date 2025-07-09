@@ -1,10 +1,10 @@
-import { envsafe, str, port } from "envsafe";
-import dotenv from "dotenv";
+import { envsafe, str, port } from 'envsafe';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 export const env = envsafe({
-  DATABASE_URL: str(),
-  JWT_SECRET: str(),
+  NODE_ENV: str({ default: 'development' }),
   PORT: port({ default: 3000 }),
+  DATABASE_URL: str({ default: 'postgresql://user:password@localhost:5432/fruits_db' }),
 });
