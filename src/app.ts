@@ -1,17 +1,29 @@
-import Fastify from "fastify";
-import root from "./routes/root";
+import Fastify from 'fastify';
+import { fruitRoutes } from './routes/fruit.route';
+import { AppError } from './utils/AppError';
 
-const app = Fastify({
-  logger: true,
-});
+export function createApp() {
+  const app = Fastify({
+    logger: {
+      level: 'info',
+    },
+  });
 
-// Register routes
-app.register(root, { prefix: "/" });
+  // Global error handler
+  app.setErrorHandler((error, request, reply) => {
+    console.error('Global error handler:', error);
+    
+    if (error instanceof AppError) {
+      reply.status(error.statusCode).send({ error: error.message });
+    } else {
+      reply.status(500).send({ error: 'Internal Server Error' });
+    }
+  });
 
-// Global error handler
-app.setErrorHandler((error, request, reply) => {
-  app.log.error(error);
-  reply.status(500).send({ error: "Internal Server Error" });
-});
+  // Register routes with /api prefix
+  app.register(async function (app) {
+    await app.register(fruitRoutes);
+  }, { prefix: '/api' });
 
-export default app;
+  return app;
+}
